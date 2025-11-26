@@ -44,6 +44,7 @@ class InsertTaskInTaskListSelectedUseCase(
             newTask.description,
             newTask.dueDate,
             taskListId,
+            newTask.hasAlarm
         )
         result.doIfSuccess { taskId ->
             taskChecklistItemsRepository.insertTaskChecklistItems(

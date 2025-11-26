@@ -20,8 +20,11 @@ import dev.sergiobelda.fonament.presentation.navigation.FonamentNavigationEventH
 
 fun addTaskNavigationEventHandler(
     navigateBack: () -> Unit,
+    navigateToReminder: () -> Unit
+
 ): FonamentNavigationEventHandler<AddTaskNavigationEvent> = FonamentNavigationEventHandler {
     when (it) {
         AddTaskNavigationEvent.NavigateBack -> navigateBack()
+        AddTaskNavigationEvent.NavigateToReminder -> navigateToReminder()
     }
 }

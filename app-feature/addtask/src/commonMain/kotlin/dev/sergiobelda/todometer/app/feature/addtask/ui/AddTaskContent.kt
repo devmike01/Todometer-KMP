@@ -37,6 +37,10 @@ import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -81,6 +85,7 @@ data object AddTaskContent : FonamentContent<AddTaskUIState, AddTaskContentState
         modifier: Modifier,
     ) {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(contentState.topAppBarState)
+        var isAlarmOn by remember { mutableStateOf(false) }
 
         val onBack: () -> Unit = {
             onEvent(
@@ -106,8 +111,13 @@ data object AddTaskContent : FonamentContent<AddTaskUIState, AddTaskContentState
             snackbarHost = { SnackbarHost(contentState.snackbarHostState) },
             topBar = {
                 AddTaskTopBar(
+                    isAlarmOn = isAlarmOn,
                     navigateBack = onBack,
                     isSaveButtonEnabled = !uiState.isAddingTask,
+                    onSetAlarmClick = {
+                        onEvent(AddTaskNavigationEvent.NavigateToReminder)
+                       // isAlarmOn = it
+                    },
                     onSaveButtonClick = {
                         onEvent(
                             AddTaskEvent.SaveButtonClick(
@@ -160,15 +170,19 @@ data object AddTaskContent : FonamentContent<AddTaskUIState, AddTaskContentState
 
     @Composable
     private fun AddTaskTopBar(
+        isAlarmOn: Boolean,
         navigateBack: () -> Unit,
         isSaveButtonEnabled: Boolean,
         onSaveButtonClick: () -> Unit,
+        onSetAlarmClick: (Boolean) -> Unit,
     ) {
         SaveActionTopAppBar(
             navigateBack = navigateBack,
             title = TodometerResources.strings.addTask,
             isSaveButtonEnabled = isSaveButtonEnabled,
             onSaveButtonClick = onSaveButtonClick,
+            isAlarmOn = isAlarmOn,
+            onSetAlarmClick = onSetAlarmClick
         )
     }
 

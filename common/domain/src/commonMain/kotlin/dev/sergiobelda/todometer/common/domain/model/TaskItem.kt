@@ -27,4 +27,5 @@ data class TaskItem(
     val checklistItemsDone: Long,
     val totalChecklistItems: Long,
     val isPinned: Boolean,
+    val hasAlarm: Boolean,
 )

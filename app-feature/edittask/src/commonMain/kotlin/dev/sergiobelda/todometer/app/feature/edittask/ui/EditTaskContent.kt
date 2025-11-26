@@ -26,6 +26,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TimePicker
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -61,6 +65,7 @@ data object EditTaskContent : FonamentContent<EditTaskUIState, EditTaskContentSt
         contentState: EditTaskContentState,
         modifier: Modifier,
     ) {
+        var isAlarmOn by remember { mutableStateOf(false) }
         when {
             uiState.isLoading -> {
                 LoadingScreenDialog(
@@ -75,6 +80,10 @@ data object EditTaskContent : FonamentContent<EditTaskUIState, EditTaskContentSt
             !uiState.isLoading -> {
                 EditTaskScaffold(
                     contentState = contentState,
+                    isAlarmOn = isAlarmOn,
+                    onSetAlarmClick = {
+                        isAlarmOn = it
+                    }
                 )
             }
         }
@@ -83,11 +92,15 @@ data object EditTaskContent : FonamentContent<EditTaskUIState, EditTaskContentSt
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun EditTaskScaffold(
+        isAlarmOn: Boolean,
+        onSetAlarmClick: (Boolean) -> Unit,
         contentState: EditTaskContentState,
     ) {
         Scaffold(
             topBar = {
                 EditTaskTopBar(
+                    isAlarmOn = isAlarmOn,
+                    onSetAlarmClick = onSetAlarmClick,
                     isSaveButtonEnabled = contentState.isSaveButtonEnabled,
                     onSaveButtonClick = {
                         onEvent(
@@ -96,6 +109,7 @@ data object EditTaskContent : FonamentContent<EditTaskUIState, EditTaskContentSt
                                 tag = contentState.tag,
                                 description = contentState.description,
                                 dueDate = contentState.dueDate,
+                                hasAlarm = contentState.hasAlarm
                             ),
                         )
                         onEvent(EditTaskNavigationEvent.NavigateBack)
@@ -132,14 +146,18 @@ data object EditTaskContent : FonamentContent<EditTaskUIState, EditTaskContentSt
 
     @Composable
     private fun EditTaskTopBar(
+        isAlarmOn: Boolean,
         isSaveButtonEnabled: Boolean,
         onSaveButtonClick: () -> Unit,
+        onSetAlarmClick: (Boolean) -> Unit
     ) {
         SaveActionTopAppBar(
             navigateBack = { onEvent(EditTaskNavigationEvent.NavigateBack) },
             isSaveButtonEnabled = isSaveButtonEnabled,
             title = TodometerResources.strings.editTask,
             onSaveButtonClick = onSaveButtonClick,
+            onSetAlarmClick = onSetAlarmClick,
+            isAlarmOn = isAlarmOn,
         )
     }
 

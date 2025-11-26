@@ -26,4 +26,5 @@ data class Task(
     val taskListId: String,
     val isPinned: Boolean,
     val sync: Boolean,
+    val hasAlarm: Boolean
 )

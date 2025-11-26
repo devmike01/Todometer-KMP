@@ -16,4 +16,4 @@
 
 package dev.sergiobelda.todometer.common.core.di
 
-val domainModules = useCaseModule
+val domainModules = useCaseModule + reminder

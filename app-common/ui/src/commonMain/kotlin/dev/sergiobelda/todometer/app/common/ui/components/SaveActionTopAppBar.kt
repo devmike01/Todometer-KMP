@@ -16,7 +16,10 @@
 
 package dev.sergiobelda.todometer.app.common.ui.components
 
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.animateValueAsState
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -26,11 +29,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.sergiobelda.todometer.common.designsystem.resources.images.Images
+import dev.sergiobelda.todometer.common.designsystem.resources.images.icons.AlarmOff
+import dev.sergiobelda.todometer.common.designsystem.resources.images.icons.AlarmOn
 import dev.sergiobelda.todometer.common.designsystem.resources.images.icons.Check
 import dev.sergiobelda.todometer.common.designsystem.resources.images.icons.NavigateBefore
+import dev.sergiobelda.todometer.common.designsystem.resources.images.icons.TaskAlt
 import dev.sergiobelda.todometer.common.resources.TodometerResources
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,9 +45,13 @@ import dev.sergiobelda.todometer.common.resources.TodometerResources
 fun SaveActionTopAppBar(
     navigateBack: () -> Unit,
     title: String,
+    isAlarmOn: Boolean,
+    onSetAlarmClick: (Boolean) -> Unit,
     onSaveButtonClick: () -> Unit,
     isSaveButtonEnabled: Boolean = true,
 ) {
+    val animIsAlarmOn  by animateIntAsState(1.takeIf { isAlarmOn } ?: 0)
+
     TopAppBar(
         navigationIcon = {
             IconButton(onClick = navigateBack) {
@@ -52,14 +63,19 @@ fun SaveActionTopAppBar(
         },
         title = { Text(title) },
         actions = {
+            IconButton(
+                modifier = Modifier,
+                onClick = { onSetAlarmClick(animIsAlarmOn != 1) }){
+                Icon(
+                    Images.Icons.AlarmOn.takeIf { isAlarmOn } ?: Images.Icons.AlarmOff,
+                    contentDescription = TodometerResources.strings.save,
+                )
+            }
             TextButton(
                 enabled = isSaveButtonEnabled,
                 onClick = onSaveButtonClick,
             ) {
-                Icon(
-                    Images.Icons.Check,
-                    contentDescription = TodometerResources.strings.save,
-                )
+
                 Spacer(modifier = Modifier.size(4.dp))
                 Text(
                     text = TodometerResources.strings.save,

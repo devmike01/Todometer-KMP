@@ -37,6 +37,7 @@ class TaskMapperTest {
             taskListId = "2",
             isPinned = false,
             sync = true,
+            hasAlarm = false
         )
         val taskEntity = task.asTaskEntity()
         assertEquals(task.id, taskEntity.id)
@@ -61,6 +62,7 @@ class TaskMapperTest {
             tasklist_id = "2",
             isPinned = false,
             sync = true,
+            hasAlarm = false
         )
         val task = taskEntity.asTask()
         assertEquals(taskEntity.id, task.id)

@@ -93,6 +93,7 @@ private val taskSample = Task(
     taskListId = "0",
     isPinned = false,
     sync = false,
+    hasAlarm = false
 )
 
 private val taskChecklistItemsSample = persistentListOf(

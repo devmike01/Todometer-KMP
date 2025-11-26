@@ -94,4 +94,5 @@ private val taskSample = Task(
     taskListId = "0",
     isPinned = false,
     sync = false,
+    hasAlarm = false
 )

@@ -32,6 +32,7 @@ internal val taskSample = Task(
     taskListId = "0",
     isPinned = false,
     sync = false,
+    hasAlarm =false,
 )
 
 internal val taskItemSample = TaskItem(
@@ -45,6 +46,7 @@ internal val taskItemSample = TaskItem(
     sync = false,
     checklistItemsDone = 0,
     totalChecklistItems = 0,
+    hasAlarm =false,
 )
 
 internal val taskListSample = TaskList(

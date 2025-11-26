@@ -55,6 +55,7 @@ uiautomator = "2.3.0"
 wear = "1.3.0"
 wearCompose = "1.5.5"
 wearInput = "1.2.0"
+material = "1.10.0"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -151,6 +152,7 @@ sqldelight-jvmDriver = { module = "app.cash.sqldelight:sqlite-driver", version.r
 sqldelight-nativeDriver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqlDelight" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
 sqldelight-primitiveAdapters = { module = "app.cash.sqldelight:primitive-adapters", version.ref = "sqlDelight" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -176,3 +178,4 @@ sergiobelda-gradle-dependencyGraphGenerator = { id = "dev.sergiobelda.gradle.dep
 sergiobelda-gradle-detekt = { id = "dev.sergiobelda.gradle.detekt" }
 sergiobelda-gradle-lint = { id = "dev.sergiobelda.gradle.lint" }
 sergiobelda-gradle-spotless = { id = "dev.sergiobelda.gradle.spotless" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

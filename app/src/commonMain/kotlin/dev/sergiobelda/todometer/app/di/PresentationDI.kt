@@ -22,6 +22,7 @@ import dev.sergiobelda.todometer.app.feature.addtasklist.di.addTaskListViewModel
 import dev.sergiobelda.todometer.app.feature.edittask.di.editTaskViewModelModule
 import dev.sergiobelda.todometer.app.feature.edittasklist.di.editTaskListViewModelModule
 import dev.sergiobelda.todometer.app.feature.home.di.homeViewModelModule
+import dev.sergiobelda.todometer.app.feature.reminder.di.reminderViewModelModule
 import dev.sergiobelda.todometer.app.feature.settings.di.settingsViewModelModule
 import dev.sergiobelda.todometer.app.feature.taskdetails.di.taskDetailsViewModelModule
 
@@ -32,4 +33,4 @@ val presentationModules = aboutViewModelModule +
     editTaskListViewModelModule +
     homeViewModelModule +
     settingsViewModelModule +
-    taskDetailsViewModelModule
+    taskDetailsViewModelModule + reminderViewModelModule

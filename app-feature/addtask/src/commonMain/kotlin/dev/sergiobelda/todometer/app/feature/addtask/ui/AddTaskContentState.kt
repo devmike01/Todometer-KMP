@@ -73,6 +73,9 @@ data class AddTaskContentState @RememberInComposition constructor(
     var timePickerDialogVisible by mutableStateOf(false)
         private set
 
+    var hasAlarm by mutableStateOf(false)
+        private set
+
     suspend fun showSnackbar(message: String) =
         snackbarHostState.showSnackbar(message = message)
 
@@ -180,6 +183,7 @@ data class AddTaskContentState @RememberInComposition constructor(
                     description = taskDescription,
                     dueDate = taskDueDate,
                     taskChecklistItems = taskChecklistItems,
+                    hasAlarm = hasAlarm
                 ),
             )
         }

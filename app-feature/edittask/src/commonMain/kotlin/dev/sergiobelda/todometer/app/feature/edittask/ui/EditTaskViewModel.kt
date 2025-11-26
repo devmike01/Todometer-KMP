@@ -78,6 +78,7 @@ class EditTaskViewModel(
                     tag = event.tag,
                     description = event.description,
                     dueDate = event.dueDate,
+                    hasAlarm = event.hasAlarm
                 ),
             )
         }

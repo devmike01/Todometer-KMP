@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.navigation.compose.rememberNavController
 import dev.sergiobelda.navigation.compose.extended.rememberNavAction
 import dev.sergiobelda.todometer.app.common.ui.theme.TodometerAppTheme
+import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderScreen
 import dev.sergiobelda.todometer.app.navhost.TodometerNavHost
 import dev.sergiobelda.todometer.common.domain.preference.AppTheme
 import dev.sergiobelda.todometer.common.domain.usecase.apptheme.GetAppThemeUseCase
@@ -41,6 +42,7 @@ fun TodometerApp() {
         TodometerAppTheme(darkTheme) {
             val navController = rememberNavController()
             val navAction = rememberNavAction(navController)
+
             TodometerNavHost(
                 navController = navController,
                 navAction = navAction,

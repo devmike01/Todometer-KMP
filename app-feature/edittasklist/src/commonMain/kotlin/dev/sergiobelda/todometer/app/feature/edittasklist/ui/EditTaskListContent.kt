@@ -22,6 +22,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -48,6 +52,8 @@ data object EditTaskListContent : FonamentContent<EditTaskListUIState, EditTaskL
         contentState: EditTaskListContentState,
         modifier: Modifier,
     ) {
+        var isAlarmOn by remember { mutableStateOf(false) }
+
         when {
             uiState.isLoading -> {
                 LoadingScreenDialog(
@@ -64,6 +70,10 @@ data object EditTaskListContent : FonamentContent<EditTaskListUIState, EditTaskL
                     topBar = {
                         EditTaskListTopBar(
                             isSaveButtonEnabled = !uiState.isLoading,
+                            isAlarmOn = isAlarmOn,
+                            onSetAlarmClick = {
+                                isAlarmOn = it
+                            },
                             onSaveButtonClick = {
                                 onEvent(
                                     EditTaskListEvent.UpdateTaskList(
@@ -88,6 +98,8 @@ data object EditTaskListContent : FonamentContent<EditTaskListUIState, EditTaskL
 
     @Composable
     private fun EditTaskListTopBar(
+        isAlarmOn: Boolean,
+        onSetAlarmClick: (Boolean) -> Unit,
         isSaveButtonEnabled: Boolean,
         onSaveButtonClick: () -> Unit,
     ) {
@@ -100,6 +112,8 @@ data object EditTaskListContent : FonamentContent<EditTaskListUIState, EditTaskL
             title = TodometerResources.strings.editTaskList,
             isSaveButtonEnabled = isSaveButtonEnabled,
             onSaveButtonClick = onSaveButtonClick,
+            onSetAlarmClick = onSetAlarmClick,
+            isAlarmOn = isAlarmOn
         )
     }
 

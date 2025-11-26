@@ -23,4 +23,5 @@ data class NewTask(
     val description: String? = null,
     val dueDate: Long? = null,
     val taskChecklistItems: List<String> = emptyList(),
+    val hasAlarm: Boolean,
 )

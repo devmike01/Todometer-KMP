@@ -27,6 +27,8 @@ sealed interface EditTaskEvent : FonamentEvent {
         val tag: Tag,
         val description: String? = null,
         val dueDate: Long? = null,
+
+        val hasAlarm: Boolean,
     ) : EditTaskEvent
 
     data class TitleValueChange(override val value: String) :

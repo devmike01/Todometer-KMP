@@ -48,3 +48,5 @@ include(":common:ui-tooling")
 include(":macrobenchmark")
 
 include(":wearapp-wearos")
+include(":common:reminder")
+include(":app-feature:reminder")

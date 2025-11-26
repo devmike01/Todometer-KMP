@@ -20,6 +20,7 @@ kotlin {
             implementation(projects.common.ui)
             implementation(projects.common.data)
             implementation(projects.common.database)
+            implementation(projects.common.reminder)
             implementation(projects.common.domain)
             implementation(projects.common.preferences)
 

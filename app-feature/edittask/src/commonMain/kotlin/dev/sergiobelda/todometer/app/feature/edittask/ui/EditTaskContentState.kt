@@ -57,6 +57,8 @@ data class EditTaskContentState @RememberInComposition constructor(
 
     var dueDate: Long? by mutableStateOf(initialDueDate)
 
+    var hasAlarm: Boolean by mutableStateOf(false)
+
     val isSaveButtonEnabled: Boolean by derivedStateOf { title.isNotBlank() }
 
     var datePickerDialogVisible by mutableStateOf(false)

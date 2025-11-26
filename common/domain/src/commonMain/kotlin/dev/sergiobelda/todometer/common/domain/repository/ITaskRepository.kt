@@ -44,6 +44,7 @@ interface ITaskRepository {
         description: String?,
         dueDate: Long?,
         taskListId: String,
+        hasAlarm: Boolean,
     ): Result<String>
 
     /**

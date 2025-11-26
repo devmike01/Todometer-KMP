@@ -6,8 +6,13 @@ plugins {
     alias(libs.plugins.sergiobelda.gradle.lint)
 }
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
     namespace = "dev.sergiobelda.todometer.common.android"
+    compileSdk = libs.versions.androidCompileSdk.get().toInt()
 }
 
 dependencies {

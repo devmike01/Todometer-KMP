@@ -44,6 +44,9 @@ import dev.sergiobelda.todometer.app.feature.edittasklist.ui.EditTaskListNavDest
 import dev.sergiobelda.todometer.app.feature.edittasklist.ui.EditTaskListScreen
 import dev.sergiobelda.todometer.app.feature.home.ui.HomeNavDestination
 import dev.sergiobelda.todometer.app.feature.home.ui.HomeScreen
+import dev.sergiobelda.todometer.app.feature.reminder.navigation.reminderNavigationEventHandler
+import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderNavDestination
+import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderScreen
 import dev.sergiobelda.todometer.app.feature.settings.navigation.settingsNavigationEventHandler
 import dev.sergiobelda.todometer.app.feature.settings.ui.SettingsNavDestination
 import dev.sergiobelda.todometer.app.feature.settings.ui.SettingsScreen
@@ -92,12 +95,20 @@ fun TodometerNavHost(
                 )
             },
         )
+
+        addTaskNode(
+            navigateBack = navigateBackAction,
+            navigateToReminder = {
+                navAction.navigate(ReminderNavDestination.safeNavRoute())
+            }
+        )
+
         addTaskListRoute(navigateBack = navigateBackAction)
         editTaskListNode(navigateBack = navigateBackAction)
-        addTaskNode(navigateBack = navigateBackAction)
         editTaskNode(navigateBack = navigateBackAction)
         settingsNode(navigateBack = navigateBackAction)
         aboutNode(navigateBack = navigateBackAction)
+        reminder(navigateBack = navigateBackAction)
     }
 }
 
@@ -121,6 +132,16 @@ private fun NavGraphBuilder.homeNode(
         )
     }
 }
+
+private fun NavGraphBuilder.reminder(
+    navigateBack: () -> Unit,){
+    composable(navDestination = ReminderNavDestination){
+        val reminderEventHandler = reminderNavigationEventHandler(navigateBack)
+        ReminderScreen.NavigationNode(viewModel = koinFonamentViewModel(),
+            navigationEventHandler = reminderEventHandler)
+    }
+}
+
 
 private fun NavGraphBuilder.taskDetailsNode(
     navigateBack: () -> Unit,
@@ -173,9 +194,11 @@ private fun NavGraphBuilder.editTaskListNode(
 
 private fun NavGraphBuilder.addTaskNode(
     navigateBack: () -> Unit,
+    navigateToReminder: () -> Unit
 ) {
     val addTaskNavigationEventHandler = addTaskNavigationEventHandler(
         navigateBack = navigateBack,
+        navigateToReminder = navigateToReminder,
     )
     composable(navDestination = AddTaskNavDestination) {
         AddTaskScreen.NavigationNode(

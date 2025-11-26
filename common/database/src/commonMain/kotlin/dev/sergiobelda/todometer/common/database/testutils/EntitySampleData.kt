@@ -57,6 +57,7 @@ val taskEntity1 = TaskEntity(
     tasklist_id = "1",
     isPinned = false,
     sync = false,
+    hasAlarm = false
 )
 
 val taskEntity1Updated = TaskEntity(
@@ -69,6 +70,7 @@ val taskEntity1Updated = TaskEntity(
     tasklist_id = "1",
     isPinned = false,
     sync = false,
+    hasAlarm = false
 )
 
 val taskEntity2 = TaskEntity(
@@ -81,6 +83,7 @@ val taskEntity2 = TaskEntity(
     tasklist_id = "1",
     isPinned = false,
     sync = false,
+    hasAlarm = false
 )
 
 val taskItemsEntities = listOf<SelectTasksByTaskListId>()

@@ -11,7 +11,7 @@ android {
     compileSdk = libs.versions.androidCompileSdk.get().toInt()
 
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(21)
     }
 
     defaultConfig {

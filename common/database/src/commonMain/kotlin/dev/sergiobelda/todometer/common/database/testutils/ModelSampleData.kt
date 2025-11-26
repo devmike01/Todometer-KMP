@@ -54,6 +54,7 @@ val task1 = Task(
     taskListId = "1",
     isPinned = false,
     sync = false,
+    hasAlarm =false
 )
 
 val task1Updated = Task(
@@ -66,6 +67,7 @@ val task1Updated = Task(
     taskListId = "1",
     isPinned = false,
     sync = false,
+    hasAlarm =false
 )
 
 val task2 = Task(
@@ -78,6 +80,7 @@ val task2 = Task(
     taskListId = "1",
     isPinned = false,
     sync = false,
+    hasAlarm =false
 )
 
 val tasks = listOf(task1, task2)

@@ -40,6 +40,7 @@ kotlin {
             implementation(projects.appFeature.home)
             implementation(projects.appFeature.settings)
             implementation(projects.appFeature.taskdetails)
+            implementation(projects.appFeature.reminder)
 
             implementation(projects.common.core)
             implementation(projects.common.ui)
@@ -106,7 +107,7 @@ android {
         }
     }
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(21)
     }
 
     dependencies {
