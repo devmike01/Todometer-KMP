@@ -1,6 +1,7 @@
 package dev.sergiobelda.todometer.app.feature.reminder.ui
 
 import androidx.compose.runtime.annotation.RememberInComposition
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,8 @@ class ReminderContentState @RememberInComposition constructor(): FonamentContent
 
     var hourCounter by mutableStateOf(0)
         private set
+
+    var twelveHour = derivedStateOf { hourCounter.takeIf { it <= 12 } ?: (hourCounter - 12) }
 
 
     companion object {
@@ -66,6 +69,31 @@ class ReminderContentState @RememberInComposition constructor(): FonamentContent
 
     fun setTime(time: String){
         this.alarmTime = time
+    }
+
+    fun setSeconds(seconds: Int){
+        this.secondsCounter = seconds
+    }
+
+    fun setMinute(minute: Int){
+        this.minutesCounter = minute
+    }
+
+    fun updateMinute(updateMinute: (Int) -> Int){
+        this.minutesCounter = updateMinute(this.minutesCounter)
+    }
+
+
+    fun updateHour(updateHour: (Int) -> Int){
+        this.hourCounter = updateHour(this.hourCounter)
+    }
+
+    fun updateSecond(onUpdateSeconds: (Int) -> Int){
+        this.secondsCounter = onUpdateSeconds(this.secondsCounter)
+    }
+
+    fun setHours(hours: Int){
+        this.hourCounter = hours
     }
 
 }

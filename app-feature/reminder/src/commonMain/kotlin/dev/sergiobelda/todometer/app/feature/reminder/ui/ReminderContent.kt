@@ -123,6 +123,7 @@ fun rememberReminderContentState(): ReminderContentState = rememberSaveable(
     ReminderContentState()
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun ReminderScreen(reminderUiState: ReminderState,
                    contentState: ReminderContentState,
@@ -136,12 +137,26 @@ fun ReminderScreen(reminderUiState: ReminderState,
         verticalArrangement = Arrangement
             .spacedBy(Dimens.Reminder.NormalItemVerticalSpacing.dp)){
 
+        val now = Clock.System.now()
+        val localTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
+        val period = "AM".takeIf { localTime.hour in 0..11 } ?: "PM"
+        //val twelveHour = m localTime.hour
+
+        LaunchedEffect(Unit){
+            contentState.setSeconds(localTime.second)
+            contentState.setMinute(localTime.minute)
+            contentState.setHours(localTime.hour)
+
+            contentState.setTimePeriod(period)
+            contentState.setTime("${contentState.twelveHour.value.toString()
+                .padStart(2, '0')}:${contentState.minutesCounter
+                .toString().padStart(2, '0')}")
+
+        }
+
 
         Box(modifier = Modifier.fillMaxWidth().padding(vertical = 35.dp)){
-            AlarmTimeClock(Modifier.align (Alignment.Center)){ time, period ->
-                contentState.setTimePeriod(period)
-                contentState.setTime(time)
-            }
+            AlarmTimeClock(Modifier.align (Alignment.Center), contentState)
         }
         DigitalTimeClock(contentState.alarmTime, contentState.period)
         Spacer(Modifier.height(5.dp))
@@ -171,45 +186,36 @@ fun DigitalTimeClock(timeInStr: String, period: String){
 
 @OptIn(ExperimentalTime::class)
 @Composable
-fun AlarmTimeClock(modifier: Modifier, onHumanTime: (String, String) -> Unit){
+private fun AlarmTimeClock(modifier: Modifier,
+                   contentState: ReminderContentState){
     val handColor = Color(0XFF263238)
-    val now = Clock.System.now()
-    val localTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
-    val period = "AM".takeIf { localTime.hour in 0..11 } ?: "PM"
-    //val twelveHour = m localTime.hour
+    val secondsHandColor = MaterialTheme.colorScheme.secondary
 
-    LaunchedEffect(Unit){
-        onHumanTime("${localTime.hour.toString()
-            .padEnd(1, '0')}:${localTime.minute
-                .toString().padEnd(1, '0')}", period)
-    }
-
-    // Move to content state
-    var secondsCounter by remember { mutableStateOf( localTime.second) }
-    var minutesCounter by remember { mutableStateOf(localTime.minute) }
-    var hourCounter by remember { mutableStateOf(localTime.hour) }
-
-    LaunchedEffect(secondsCounter){
+    LaunchedEffect(contentState.secondsCounter){
        // var seconds = 0
         launch(Dispatchers.IO) {
             while (true){
                 delay(1_000)
-                if (secondsCounter >= 60){
-                    secondsCounter = 0
-                    if (minutesCounter >= 60){
-                        minutesCounter = 0
-                        hourCounter += 1
+                if (contentState.secondsCounter >= 60){
+                    contentState.setSeconds(0)
+                    if (contentState.minutesCounter >= 60){
+                        contentState.setMinute(0)
+                       // hourCounter += 1
+                        contentState.updateHour { it + 1 }
                     }else{
-                        minutesCounter += 1
+                        contentState.updateMinute { it + 1 }
+                       // minutesCounter += 1
                     }
 
                 }else{
-                    secondsCounter += 1
+                    //contentState.secondsCounter += 1
+                    contentState.updateSecond { it + 1 }
                 }
 
 
-                if (hourCounter >= 24){
-                    hourCounter = 0
+                if (contentState.hourCounter >= 24){
+                   // hourCounter = 0
+                    contentState.setHours(0)
                 }
             }
         }
@@ -222,7 +228,7 @@ fun AlarmTimeClock(modifier: Modifier, onHumanTime: (String, String) -> Unit){
         val clockHand = 5.dp.toPx()
         val handCap = Stroke(width = clockHand, cap = StrokeCap.Butt)
 
-        drawCircle(color = Color.White.copy(alpha = .4f),
+        drawCircle(color = Color.Gray.copy(alpha = .4f),
             radius = radius,
             center = center
         )
@@ -277,19 +283,19 @@ fun AlarmTimeClock(modifier: Modifier, onHumanTime: (String, String) -> Unit){
         drawCircle(handColor, radius = rootRadius,
             style = Stroke(width = clockHand))
 
-        rotateRad((minutesCounter * 6).toFloat().toRadians(), center){
+        rotateRad((contentState.minutesCounter * 6).toFloat().toRadians(), center){
             drawPath(minuteHandPath, handColor,
                 style = handCap)
         }
 
-        rotateRad((hourCounter % 12 * 30 + minutesCounter * .5f).toRadians(), center){
+        rotateRad((contentState.hourCounter % 12 * 30 + contentState.minutesCounter * .5f).toRadians(), center){
             drawPath(hourHandPath, handColor,
                 style = handCap)
         }
 
 
-        rotateRad(radians =(secondsCounter * 6).toFloat().toRadians(), center){
-            drawPath(secondsHandPath, Color.Magenta,
+        rotateRad(radians =(contentState.secondsCounter * 6).toFloat().toRadians(), center){
+            drawPath(secondsHandPath, secondsHandColor,
                 style = Stroke(width = clockHand * .2f, cap = StrokeCap.Round))
         }
 
@@ -306,7 +312,7 @@ fun <T> RowWithTitle(title: String, items: List<T>, listContent: @Composable (T)
     LazyRow(horizontalArrangement = Arrangement.spacedBy(Dimens.Reminder.HorizontalSpace.dp),
         modifier = Modifier.wrapContentHeight().fillMaxWidth()) {
         items.map {
-            item { Box(modifier = Modifier.wrapContentSize()){
+            item { Box(modifier = Modifier.wrapContentSize().animateItem()){
                 listContent(it)
             } }
         }
@@ -315,15 +321,16 @@ fun <T> RowWithTitle(title: String, items: List<T>, listContent: @Composable (T)
 
 @Composable
 fun SnoozeItem(snoozeTime: SnoozeTime, onItemClick: (SnoozeTime) -> Unit){
+    val borderColor = MaterialTheme.colorScheme.secondary
     TextButton(onClick = {
         onItemClick(snoozeTime)
     }, modifier = Modifier
         .wrapContentWidth()
         .drawBehind{
             drawRoundRect(
-                Color.Yellow.takeIf { snoozeTime.checked } ?:
+                borderColor.takeIf { snoozeTime.checked } ?:
                 Color.Gray.copy(alpha = .2f),
-                style =  Stroke(width = 2f).takeIf { snoozeTime.checked }
+                style =  Stroke(width =  2.dp.toPx()).takeIf { snoozeTime.checked }
                     ?: Fill,
                 cornerRadius = CornerRadius(size.minDimension / 2f))
         }){
@@ -334,14 +341,15 @@ fun SnoozeItem(snoozeTime: SnoozeTime, onItemClick: (SnoozeTime) -> Unit){
 
 @Composable
 fun DayItem(day: DayOfWeekInitial, isSelected: Boolean, onItemClick: (DayOfWeekInitial) -> Unit){
+    val borderColor = MaterialTheme.colorScheme.secondary
     TextButton(onClick = { onItemClick(day) },
         modifier = Modifier.size(50.dp)
             .wrapContentHeight(align = Alignment.CenterVertically).drawBehind{
                 drawCircle(
-                    Color.Yellow.takeIf { isSelected } ?: Color.Gray.copy(alpha = .2f),
+                    borderColor.takeIf { isSelected } ?: Color.Gray.copy(alpha = .2f),
                     center = center,
                     radius = size.minDimension / 2,
-                    style =  Stroke(width = 2f).takeIf { isSelected } ?: Fill)
+                    style =  Stroke(width = 2.dp.toPx()).takeIf { isSelected } ?: Fill)
             }){
         Text(day.title, textAlign = TextAlign.Center)
     }
