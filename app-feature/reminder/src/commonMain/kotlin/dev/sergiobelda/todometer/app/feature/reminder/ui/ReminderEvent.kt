@@ -6,5 +6,6 @@ sealed interface ReminderEvent : FonamentEvent {
     data object LoadRepeatDays : ReminderEvent
     data object LoadSnoozeTimes  : ReminderEvent
     data class SelectRepeatDay(val selection: Int): ReminderEvent
+    data class SelectSnoozeTime(val selection: Int): ReminderEvent
 
 }

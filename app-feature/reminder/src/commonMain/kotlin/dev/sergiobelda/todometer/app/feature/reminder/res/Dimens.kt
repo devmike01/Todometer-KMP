@@ -8,6 +8,7 @@ data object Dimens {
         const val HorizontalSpace = 8
         const val NormalItemVerticalSpacing = 15
         const val HorizontalSnoozeInnerItemPadding = 15
+        const val DigitalTimeSpace = 15
     }
 }
 

@@ -7,11 +7,14 @@ import dev.sergiobelda.todometer.app.feature.reminder.model.SnoozeTime
 
 class ReminderScreenViewModel : FonamentViewModel<ReminderState>(initialUIState = ReminderState()) {
 
+    private val repeatDaysSelections = mutableMapOf<Int, Boolean>()
+
     override fun handleEvent(event: FonamentEvent) {
         when(event){
             is ReminderEvent.LoadRepeatDays -> loadRepeatDays()
             is ReminderEvent.LoadSnoozeTimes -> loadSnoozeTimes()
-            is ReminderEvent.SelectRepeatDay -> selectRepeatedDay(event.selection)
+            is ReminderEvent.SelectRepeatDay -> toggleRepeatedDay(event.selection)
+            is ReminderEvent.SelectSnoozeTime -> toggleSnoozeTime(event.selection)
         }
     }
 
@@ -23,21 +26,31 @@ class ReminderScreenViewModel : FonamentViewModel<ReminderState>(initialUIState 
         ) }
     }
 
-    fun selectRepeatedDay(selection: Int){
+    fun toggleRepeatedDay(selection: Int){
+        repeatDaysSelections[selection] = repeatDaysSelections[selection] == false || repeatDaysSelections[selection] == null
         updateUIState {
             val repeatedDays = uiState.repeatedDayOfWeek.map { day ->
-                day.copy(checked = day.id == selection)
+                day.copy(checked = repeatDaysSelections[day.id] == true)
             }
             it.copy(repeatedDayOfWeek = repeatedDays)
         }
+
     }
 
     fun loadSnoozeTimes(){
-        updateUIState { it.copy(snoozeTimes = mapOf("5 minutes" to 5, "10 minutes" to 10, "15 minutes" to 15)
-                .map {  snooze ->
-                    SnoozeTime(title = snooze.key, false)
+        updateUIState {
+            it.copy(snoozeTimes = listOf("5 minutes","10 minutes", "15 minutes")
+                .mapIndexed { index,   snooze ->
+                    SnoozeTime(title = snooze, false, index)
                 }
         ) }
+    }
+
+    fun toggleSnoozeTime(selection: Int){
+      //  snoozeSelections[selection] = snoozeSelections[selection] == false || snoozeSelections[selection] == null
+        updateUIState {
+            it.copy(snoozeTimes = it.snoozeTimes.map { st -> st.copy(checked = selection == st.id) })
+        }
     }
 
 
