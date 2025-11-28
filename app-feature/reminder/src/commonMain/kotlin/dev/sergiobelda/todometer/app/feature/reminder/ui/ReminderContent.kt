@@ -64,6 +64,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -73,6 +74,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 
 class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
@@ -108,7 +110,7 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
             ReminderScreen(uiState,
                 contentState,
                 onRepeatedDayClick ={ day ->
-                    onEvent(ReminderEvent.SelectRepeatDay(day.id))
+                    onEvent(ReminderEvent.SelectRepeatDay(day.key))
                 },
                 onSnoozeTime ={ snooze ->
                     onEvent(ReminderEvent.SelectSnoozeTime(snooze.id))
@@ -122,6 +124,9 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
                 },
                 onSetHour = { hours, isUpdate ->
                     onEvent(ReminderEvent.HourTimeChanged(hours, isUpdate))
+                },
+                onSetDay = {
+                    onEvent(ReminderEvent.PreSelectRepeatDays(it.name))
                 },
                 onSetTimeAndPeriod = { time, period ->
                     onEvent(ReminderEvent.TimePeriodChanged(period))
@@ -152,6 +157,7 @@ fun ReminderScreen(reminderUiState: ReminderState,
                    onSetSeconds: (Int, Boolean) -> Unit,
                    onSetMinutes: (Int, Boolean) -> Unit,
                    onSetHour: (Int, Boolean) -> Unit,
+                   onSetDay: (DayOfWeek) -> Unit,
 
                    modifier: Modifier = Modifier){
 
@@ -161,25 +167,24 @@ fun ReminderScreen(reminderUiState: ReminderState,
         verticalArrangement = Arrangement
             .spacedBy(Dimens.Reminder.NormalItemVerticalSpacing.dp)){
 
-        val now = Clock.System.now()
+        val now = Instant.fromEpochMilliseconds(reminderUiState.alarmTimeInMillis)
 
-        val localTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
+        val localTime = now.toLocalDateTime(TimeZone.UTC)
         val period = "AM".takeIf { localTime.hour in 0..11 } ?: "PM"
         //val twelveHour = m localTime.hour
 
         LaunchedEffect(contentState.minutesCounter){
-//            contentState.setSeconds(localTime.second)
-//            contentState.setMinute(localTime.minute)
-//            contentState.setHours(localTime.hour)
+
             onSetSeconds(localTime.second, false)
             onSetMinutes(localTime.minute, false)
             onSetHour(localTime.hour, false)
+            onSetDay(localTime.dayOfWeek)
+
+            // PreSelectRepeatDays
 
             onSetTimeAndPeriod("${contentState.twelveHour.value.toString()
                 .padStart(2, '0')}:${contentState.minutesCounter
                 .toString().padStart(2, '0')}", period)
-//            contentState.setTimePeriod(period)
-//            contentState.setTime()
 
         }
 
@@ -194,10 +199,12 @@ fun ReminderScreen(reminderUiState: ReminderState,
                     onSetSeconds(seconds, isUpdate)
                 })
         }
-        DigitalTimeClock(contentState.alarmTime, contentState.period)
+        DigitalTimeClock(contentState.alarmTime,
+            contentState.period)
         Spacer(Modifier.height(5.dp))
         RowWithTitle("Repeat", items = reminderUiState.repeatedDayOfWeek,){
-            DayItem(it, isSelected = it.checked, onItemClick = onRepeatedDayClick)
+            DayItem(it, isSelected = it.checked,
+                onItemClick = onRepeatedDayClick)
         }
         Spacer(Modifier.height(5.dp))
         RowWithTitle(Strings.Snooze, items = reminderUiState.snoozeTimes){
@@ -230,37 +237,37 @@ private fun AlarmTimeClock(modifier: Modifier,
     val handColor = Color(0XFF263238)
     val secondsHandColor = MaterialTheme.colorScheme.secondary
 
-    LaunchedEffect(contentState.secondsCounter){
-       // var seconds = 0
-        launch(Dispatchers.IO) {
-            while (true){
-                delay(1_000)
-                if (contentState.secondsCounter >= 60){
-                   // contentState.setSeconds(0)
-                    if (contentState.minutesCounter >= 60){
-                        onSetMinutes(0, false)
-                        onSetHour(1, true)
-//                        contentState.setMinute(0)
-//                        contentState.updateHour { it + 1 }
-                    }else{
-                        onSetMinutes(1, true)
-                       // contentState.updateMinute { it + 1 }
-                    }
-
-                }else{
-                    onSetSeconds(1, true)
-                   // contentState.updateSecond { it + 1 }
-                }
-
-
-                if (contentState.hourCounter >= 24){
-                    onSetHour(0, false)
-                   // contentState.setHours(0)
-                }
-            }
-        }
-
-    }
+//    LaunchedEffect(contentState.secondsCounter){
+//       // var seconds = 0
+//        launch(Dispatchers.IO) {
+//            while (true){
+//                delay(1_000)
+//                if (contentState.secondsCounter >= 60){
+//                   // contentState.setSeconds(0)
+//                    if (contentState.minutesCounter >= 60){
+//                        onSetMinutes(0, false)
+//                        onSetHour(1, true)
+////                        contentState.setMinute(0)
+////                        contentState.updateHour { it + 1 }
+//                    }else{
+//                        onSetMinutes(1, true)
+//                       // contentState.updateMinute { it + 1 }
+//                    }
+//
+//                }else{
+//                    onSetSeconds(1, true)
+//                   // contentState.updateSecond { it + 1 }
+//                }
+//
+//
+//                if (contentState.hourCounter >= 24){
+//                    onSetHour(0, false)
+//                   // contentState.setHours(0)
+//                }
+//            }
+//        }
+//
+//    }
     Canvas(modifier = modifier.fillMaxWidth(.7f)
         .fillMaxHeight(.3f)){
         val rootRadius = 5.dp.toPx()
@@ -391,7 +398,7 @@ fun DayItem(day: DayOfWeekInitial, isSelected: Boolean, onItemClick: (DayOfWeekI
                     radius = size.minDimension / 2,
                     style =  Stroke(width = 2.dp.toPx()).takeIf { isSelected } ?: Fill)
             }){
-        Text(day.title, textAlign = TextAlign.Center)
+        Text(day.title.toString(), textAlign = TextAlign.Center)
     }
 }
 

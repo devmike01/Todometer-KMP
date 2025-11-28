@@ -4,8 +4,9 @@ import dev.sergiobelda.fonament.presentation.ui.FonamentEvent
 
 sealed interface ReminderEvent : FonamentEvent {
     data object LoadRepeatDays : ReminderEvent
+    data class PreSelectRepeatDays(val selection: String) : ReminderEvent
     data object LoadSnoozeTimes  : ReminderEvent
-    data class SelectRepeatDay(val selection: Int): ReminderEvent
+    data class SelectRepeatDay(val selection: String): ReminderEvent
     data class SelectSnoozeTime(val selection: Int): ReminderEvent
     data class TimePeriodChanged(val period: String) : ReminderEvent
     data class AlarmTimeChanged(val alarmTime: String) : ReminderEvent

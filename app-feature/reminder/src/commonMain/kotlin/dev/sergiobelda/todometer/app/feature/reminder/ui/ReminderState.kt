@@ -7,4 +7,8 @@ import kotlinx.collections.immutable.ImmutableList
 
 data class ReminderState(
     val repeatedDayOfWeek: List<DayOfWeekInitial> = emptyList(),
-    val snoozeTimes: List<SnoozeTime> = emptyList()): FonamentUIState
+    val snoozeTimes: List<SnoozeTime> = emptyList(),
+    val alarmTimeInMillis: Long = 0L
+
+): FonamentUIState
+
