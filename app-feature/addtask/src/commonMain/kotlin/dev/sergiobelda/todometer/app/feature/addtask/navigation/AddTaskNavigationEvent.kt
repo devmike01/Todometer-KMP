@@ -20,5 +20,5 @@ import dev.sergiobelda.fonament.presentation.navigation.FonamentNavigationEvent
 
 sealed interface AddTaskNavigationEvent : FonamentNavigationEvent {
     data object NavigateBack : AddTaskNavigationEvent
-    data object NavigateToReminder : AddTaskNavigationEvent
+    data class NavigateToReminder(val alarmTimeInMillis: Long) : AddTaskNavigationEvent
 }

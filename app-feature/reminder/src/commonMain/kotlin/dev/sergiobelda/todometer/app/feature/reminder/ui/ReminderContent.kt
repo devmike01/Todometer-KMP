@@ -54,6 +54,7 @@ import dev.sergiobelda.fonament.presentation.ui.FonamentContent
 import dev.sergiobelda.todometer.app.feature.reminder.exts.f
 import dev.sergiobelda.todometer.app.feature.reminder.model.DayOfWeekInitial
 import dev.sergiobelda.todometer.app.feature.reminder.model.SnoozeTime
+import dev.sergiobelda.todometer.app.feature.reminder.navigation.ReminderNavigationEvent
 import dev.sergiobelda.todometer.app.feature.reminder.res.Dimens
 import dev.sergiobelda.todometer.app.feature.reminder.res.Strings
 import dev.sergiobelda.todometer.common.designsystem.resources.images.Images
@@ -63,6 +64,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -91,7 +93,9 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
                 TopAppBar({
                     Text("Set Alarm")
                 }, navigationIcon = {
-                    IconButton(onClick = {}){
+                    IconButton(onClick = {
+                        onEvent(ReminderNavigationEvent.NavigateBack)
+                    }){
                         Icon(Images.Icons.ArrowBack,
                             contentDescription = Strings.SetAlarm)
                     }
@@ -109,7 +113,21 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
                 onSnoozeTime ={ snooze ->
                     onEvent(ReminderEvent.SelectSnoozeTime(snooze.id))
                 },
-                modifier = Modifier.padding(it))
+                modifier = Modifier.padding(it),
+                onSetSeconds = { seconds, isUpdate ->
+                    onEvent(ReminderEvent.SecondTimeChanged(seconds, isUpdate))
+                },
+                onSetMinutes = { mins, isUpdate ->
+                    onEvent(ReminderEvent.MinuteTimeChanged(mins, isUpdate))
+                },
+                onSetHour = { hours, isUpdate ->
+                    onEvent(ReminderEvent.HourTimeChanged(hours, isUpdate))
+                },
+                onSetTimeAndPeriod = { time, period ->
+                    onEvent(ReminderEvent.TimePeriodChanged(period))
+                    onEvent(ReminderEvent.AlarmTimeChanged(time))
+                }
+                )
         }
     }
 
@@ -129,6 +147,12 @@ fun ReminderScreen(reminderUiState: ReminderState,
                    contentState: ReminderContentState,
                    onRepeatedDayClick: (DayOfWeekInitial) -> Unit,
                    onSnoozeTime: (SnoozeTime) -> Unit,
+                   onSetTimeAndPeriod: (String, String) -> Unit,
+
+                   onSetSeconds: (Int, Boolean) -> Unit,
+                   onSetMinutes: (Int, Boolean) -> Unit,
+                   onSetHour: (Int, Boolean) -> Unit,
+
                    modifier: Modifier = Modifier){
 
     Column(
@@ -138,25 +162,37 @@ fun ReminderScreen(reminderUiState: ReminderState,
             .spacedBy(Dimens.Reminder.NormalItemVerticalSpacing.dp)){
 
         val now = Clock.System.now()
+
         val localTime = now.toLocalDateTime(TimeZone.currentSystemDefault())
         val period = "AM".takeIf { localTime.hour in 0..11 } ?: "PM"
         //val twelveHour = m localTime.hour
 
-        LaunchedEffect(Unit){
-            contentState.setSeconds(localTime.second)
-            contentState.setMinute(localTime.minute)
-            contentState.setHours(localTime.hour)
+        LaunchedEffect(contentState.minutesCounter){
+//            contentState.setSeconds(localTime.second)
+//            contentState.setMinute(localTime.minute)
+//            contentState.setHours(localTime.hour)
+            onSetSeconds(localTime.second, false)
+            onSetMinutes(localTime.minute, false)
+            onSetHour(localTime.hour, false)
 
-            contentState.setTimePeriod(period)
-            contentState.setTime("${contentState.twelveHour.value.toString()
+            onSetTimeAndPeriod("${contentState.twelveHour.value.toString()
                 .padStart(2, '0')}:${contentState.minutesCounter
-                .toString().padStart(2, '0')}")
+                .toString().padStart(2, '0')}", period)
+//            contentState.setTimePeriod(period)
+//            contentState.setTime()
 
         }
 
 
         Box(modifier = Modifier.fillMaxWidth().padding(vertical = 35.dp)){
-            AlarmTimeClock(Modifier.align (Alignment.Center), contentState)
+            AlarmTimeClock(Modifier.align (Alignment.Center),
+                contentState, onSetHour = {hour, isUpdate ->
+                    onSetHour(hour, isUpdate)
+                }, onSetMinutes = { mins, isUpdate ->
+                    onSetMinutes(mins, isUpdate)
+                }, onSetSeconds = { seconds, isUpdate ->
+                    onSetSeconds(seconds, isUpdate)
+                })
         }
         DigitalTimeClock(contentState.alarmTime, contentState.period)
         Spacer(Modifier.height(5.dp))
@@ -187,7 +223,10 @@ fun DigitalTimeClock(timeInStr: String, period: String){
 @OptIn(ExperimentalTime::class)
 @Composable
 private fun AlarmTimeClock(modifier: Modifier,
-                   contentState: ReminderContentState){
+                           contentState: ReminderContentState,
+                           onSetSeconds: (Int, Boolean) -> Unit,
+                           onSetMinutes: (Int, Boolean) -> Unit,
+                           onSetHour: (Int, Boolean) -> Unit){
     val handColor = Color(0XFF263238)
     val secondsHandColor = MaterialTheme.colorScheme.secondary
 
@@ -197,25 +236,26 @@ private fun AlarmTimeClock(modifier: Modifier,
             while (true){
                 delay(1_000)
                 if (contentState.secondsCounter >= 60){
-                    contentState.setSeconds(0)
+                   // contentState.setSeconds(0)
                     if (contentState.minutesCounter >= 60){
-                        contentState.setMinute(0)
-                       // hourCounter += 1
-                        contentState.updateHour { it + 1 }
+                        onSetMinutes(0, false)
+                        onSetHour(1, true)
+//                        contentState.setMinute(0)
+//                        contentState.updateHour { it + 1 }
                     }else{
-                        contentState.updateMinute { it + 1 }
-                       // minutesCounter += 1
+                        onSetMinutes(1, true)
+                       // contentState.updateMinute { it + 1 }
                     }
 
                 }else{
-                    //contentState.secondsCounter += 1
-                    contentState.updateSecond { it + 1 }
+                    onSetSeconds(1, true)
+                   // contentState.updateSecond { it + 1 }
                 }
 
 
                 if (contentState.hourCounter >= 24){
-                   // hourCounter = 0
-                    contentState.setHours(0)
+                    onSetHour(0, false)
+                   // contentState.setHours(0)
                 }
             }
         }

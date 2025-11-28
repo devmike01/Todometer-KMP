@@ -52,6 +52,9 @@ data class AddTaskContentState @RememberInComposition constructor(
     var taskTitle by mutableStateOf("")
         private set
 
+    var message by mutableStateOf("")
+        private set
+
     var taskTitleInputError by mutableStateOf(false)
         private set
 
@@ -81,6 +84,7 @@ data class AddTaskContentState @RememberInComposition constructor(
 
     override fun handleEvent(event: FonamentEvent) {
         when (event) {
+            is AddTaskEvent.ShowMessage -> showMessage(event.message)
             is AddTaskEvent.OnBack -> checkOnBack(event)
             is AddTaskEvent.ConfirmDatePickerDialog -> confirmDatePickerDialog()
             is AddTaskEvent.DismissDatePickerDialog -> dismissDatePickerDialog()
@@ -108,8 +112,13 @@ data class AddTaskContentState @RememberInComposition constructor(
         datePickerDialogVisible = false
     }
 
+
     private fun showDatePickerDialog() {
         datePickerDialogVisible = true
+    }
+
+    private fun showMessage(message: String){
+        this.message = message
     }
 
     private fun confirmTimePickerDialog() {
@@ -170,6 +179,8 @@ data class AddTaskContentState @RememberInComposition constructor(
     private fun taskDescriptionValueChange(event: AddTaskEvent.TaskDescriptionValueChange) {
         taskDescription = event.value
     }
+
+
 
     private fun onSaveButtonClick(event: AddTaskEvent.SaveButtonClick) {
         taskTitleInputError = false

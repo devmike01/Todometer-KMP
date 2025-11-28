@@ -9,6 +9,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.setValue
 import dev.sergiobelda.fonament.presentation.ui.FonamentContentState
+import dev.sergiobelda.fonament.presentation.ui.FonamentEvent
 
 class ReminderContentState @RememberInComposition constructor(): FonamentContentState {
 
@@ -35,6 +36,33 @@ class ReminderContentState @RememberInComposition constructor(): FonamentContent
 
     var twelveHour = derivedStateOf { hourCounter.takeIf { it <= 12 } ?: (hourCounter - 12) }
 
+    override fun handleEvent(event: FonamentEvent) {
+        when(event){
+            is ReminderEvent.TimePeriodChanged -> setTimePeriod(event.period)
+            is ReminderEvent.AlarmTimeChanged -> setTime(event.alarmTime)
+            is ReminderEvent.MinuteTimeChanged -> {
+                if (event.isUpdate){
+                    updateMinute { it + event.minutes }
+                }else{
+                    setMinute(event.minutes)
+                }
+            }
+            is ReminderEvent.SecondTimeChanged -> {
+                if (event.isUpdate){
+                    updateSecond { it + event.seconds }
+                }else{
+                    setSeconds(event.seconds)
+                }
+            }
+            is ReminderEvent.HourTimeChanged -> {
+                if (event.isUpdate){
+                    updateHour { it + event.hour }
+                }else{
+                    setHours(event.hour)
+                }
+            }
+        }
+    }
 
     companion object {
 
@@ -63,36 +91,36 @@ class ReminderContentState @RememberInComposition constructor(): FonamentContent
         )
     }
 
-    fun setTimePeriod(period: String){
+    private fun setTimePeriod(period: String){
         this.period = period
     }
 
-    fun setTime(time: String){
+    private fun setTime(time: String){
         this.alarmTime = time
     }
 
-    fun setSeconds(seconds: Int){
+    private fun setSeconds(seconds: Int){
         this.secondsCounter = seconds
     }
 
-    fun setMinute(minute: Int){
+    private fun setMinute(minute: Int){
         this.minutesCounter = minute
     }
 
-    fun updateMinute(updateMinute: (Int) -> Int){
+    private fun updateMinute(updateMinute: (Int) -> Int){
         this.minutesCounter = updateMinute(this.minutesCounter)
     }
 
 
-    fun updateHour(updateHour: (Int) -> Int){
+    private fun updateHour(updateHour: (Int) -> Int){
         this.hourCounter = updateHour(this.hourCounter)
     }
 
-    fun updateSecond(onUpdateSeconds: (Int) -> Int){
+    private fun updateSecond(onUpdateSeconds: (Int) -> Int){
         this.secondsCounter = onUpdateSeconds(this.secondsCounter)
     }
 
-    fun setHours(hours: Int){
+    private fun setHours(hours: Int){
         this.hourCounter = hours
     }
 

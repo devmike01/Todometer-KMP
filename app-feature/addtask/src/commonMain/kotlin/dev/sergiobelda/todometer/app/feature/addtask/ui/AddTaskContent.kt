@@ -85,7 +85,6 @@ data object AddTaskContent : FonamentContent<AddTaskUIState, AddTaskContentState
         modifier: Modifier,
     ) {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(contentState.topAppBarState)
-        var isAlarmOn by remember { mutableStateOf(false) }
 
         val onBack: () -> Unit = {
             onEvent(
@@ -106,16 +105,30 @@ data object AddTaskContent : FonamentContent<AddTaskUIState, AddTaskContentState
             }
         }
 
+        LaunchedEffect(contentState.message) {
+            contentState.message.let { message ->
+                if(message.isNotBlank()){
+                    contentState.showSnackbar(message)
+                }
+            }
+        }
+
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             snackbarHost = { SnackbarHost(contentState.snackbarHostState) },
             topBar = {
                 AddTaskTopBar(
-                    isAlarmOn = isAlarmOn,
+                    isAlarmOn = contentState.hasAlarm,
                     navigateBack = onBack,
                     isSaveButtonEnabled = !uiState.isAddingTask,
                     onSetAlarmClick = {
-                        onEvent(AddTaskNavigationEvent.NavigateToReminder)
+                        val dueDate = contentState.taskDueDate
+                        if(dueDate != null){
+                            onEvent(AddTaskNavigationEvent
+                                .NavigateToReminder(dueDate))
+                        }else{
+                            onEvent(AddTaskEvent.ShowMessage("Due date has not been set."))
+                        }
                        // isAlarmOn = it
                     },
                     onSaveButtonClick = {

@@ -5,7 +5,7 @@ import dev.sergiobelda.fonament.presentation.ui.FonamentViewModel
 import dev.sergiobelda.todometer.app.feature.reminder.model.DayOfWeekInitial
 import dev.sergiobelda.todometer.app.feature.reminder.model.SnoozeTime
 
-class ReminderScreenViewModel : FonamentViewModel<ReminderState>(initialUIState = ReminderState()) {
+class ReminderScreenViewModel(private val dateTime: Long) : FonamentViewModel<ReminderState>(initialUIState = ReminderState()) {
 
     private val repeatDaysSelections = mutableMapOf<Int, Boolean>()
 

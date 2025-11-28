@@ -34,6 +34,7 @@ sealed interface AddTaskEvent : FonamentEvent {
     data object DismissDiscardTaskDialog : AddTaskEvent
     data object ClearDateTime : AddTaskEvent
 
+    data class ShowMessage(val message: String) : AddTaskEvent
     data class TaskTitleValueChange(val value: String) : AddTaskEvent
     data class SelectTag(val tag: Tag) : AddTaskEvent
     data class AddTaskCheckListItem(val item: String) : AddTaskEvent

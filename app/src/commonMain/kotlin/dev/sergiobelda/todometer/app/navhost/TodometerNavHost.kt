@@ -45,7 +45,9 @@ import dev.sergiobelda.todometer.app.feature.edittasklist.ui.EditTaskListScreen
 import dev.sergiobelda.todometer.app.feature.home.ui.HomeNavDestination
 import dev.sergiobelda.todometer.app.feature.home.ui.HomeScreen
 import dev.sergiobelda.todometer.app.feature.reminder.navigation.reminderNavigationEventHandler
+import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderNavArgumentKeys
 import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderNavDestination
+import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderSafeNavArgs
 import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderScreen
 import dev.sergiobelda.todometer.app.feature.settings.navigation.settingsNavigationEventHandler
 import dev.sergiobelda.todometer.app.feature.settings.ui.SettingsNavDestination
@@ -99,7 +101,8 @@ fun TodometerNavHost(
         addTaskNode(
             navigateBack = navigateBackAction,
             navigateToReminder = {
-                navAction.navigate(ReminderNavDestination.safeNavRoute())
+                navAction.navigate(ReminderNavDestination
+                    .safeNavRoute(it))
             }
         )
 
@@ -135,9 +138,12 @@ private fun NavGraphBuilder.homeNode(
 
 private fun NavGraphBuilder.reminder(
     navigateBack: () -> Unit,){
-    composable(navDestination = ReminderNavDestination){
+    composable(navDestination = ReminderNavDestination){ navBackStackEntry ->
+        val alarmTimeMillis = ReminderSafeNavArgs(navBackStackEntry).alarmTime
         val reminderEventHandler = reminderNavigationEventHandler(navigateBack)
-        ReminderScreen.NavigationNode(viewModel = koinFonamentViewModel(),
+        ReminderScreen.NavigationNode(viewModel = koinFonamentViewModel{
+            parametersOf(alarmTimeMillis)
+        },
             navigationEventHandler = reminderEventHandler)
     }
 }
@@ -194,14 +200,15 @@ private fun NavGraphBuilder.editTaskListNode(
 
 private fun NavGraphBuilder.addTaskNode(
     navigateBack: () -> Unit,
-    navigateToReminder: () -> Unit
+    navigateToReminder: (Long) -> Unit
 ) {
     val addTaskNavigationEventHandler = addTaskNavigationEventHandler(
         navigateBack = navigateBack,
         navigateToReminder = navigateToReminder,
     )
-    composable(navDestination = AddTaskNavDestination) {
-        AddTaskScreen.NavigationNode(
+
+    composable(navDestination = AddTaskNavDestination) { navBackStackEntry ->
+       AddTaskScreen.NavigationNode(
             navigationEventHandler = addTaskNavigationEventHandler,
             viewModel = koinFonamentViewModel(),
         )
