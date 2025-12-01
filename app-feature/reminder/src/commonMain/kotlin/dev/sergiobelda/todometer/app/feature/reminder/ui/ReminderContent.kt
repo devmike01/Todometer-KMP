@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -101,6 +103,16 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
                         Icon(Images.Icons.ArrowBack,
                             contentDescription = Strings.SetAlarm)
                     }
+                }, actions = {
+                    Button(onClick = {
+
+                    },
+                        colors = ButtonDefaults.buttonColors().copy(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = Color.White
+                        ) ){
+                        Text(Strings.Done)
+                    }
                 })
             }) {
             LaunchedEffect(Unit){
@@ -135,7 +147,6 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
                 )
         }
     }
-
 
 }
 

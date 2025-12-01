@@ -1,10 +1,8 @@
 package dev.sergiobelda.todometer.common.reminder
 
 
-actual class TodoAlarmManager (){
-    actual fun set(timeInSeconds: Long) {
-
-    }
+actual interface AppAlarmManager{
+    actual fun set(timeInMilliseconds: Long)
 
 //    func createReminderWithAlarm(at date: Date, title: String) {
 //        let eventStore = EKEventStore()

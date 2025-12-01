@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.sergiobelda.gradle.common.library.android)
     alias(libs.plugins.sergiobelda.gradle.dependencyGraphGenerator)
     alias(libs.plugins.sergiobelda.gradle.lint)
+
 }
 
 
@@ -16,6 +17,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(libs.sergiobelda.fonament.diKoin)
             implementation(libs.androidx.datastore.preferences.core)
             implementation(libs.jetbrains.kotlin.coroutines.core)
         }

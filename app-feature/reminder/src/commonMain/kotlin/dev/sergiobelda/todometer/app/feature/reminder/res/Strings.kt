@@ -4,4 +4,5 @@ data object Strings {
 
     const val SetAlarm = "Set Alarm"
     const val Snooze = "Snooze"
+    const val Done = "Done"
 }
