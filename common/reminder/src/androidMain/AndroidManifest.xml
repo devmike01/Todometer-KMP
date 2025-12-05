@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Required for apps using exact alarms on Android 12 (API 31) and higher -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Required to reschedule alarms after a device reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application>
+        <receiver android:name="dev.sergiobelda.todometer.common.reminder.TodoAlarmReceiver"
+            android:exported="false"
+            android:label="Todometer Reminder">
+        </receiver>
+    </application>
+</manifest>

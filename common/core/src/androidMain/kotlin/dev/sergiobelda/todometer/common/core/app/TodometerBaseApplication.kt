@@ -17,14 +17,11 @@
 package dev.sergiobelda.todometer.common.core.app
 
 import android.app.Application
-import dev.sergiobelda.todometer.common.database.DriverFactory
-import dev.sergiobelda.todometer.common.preferences.PreferencesFactory
 
 open class TodometerBaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        PreferencesFactory.appContext = this
-        DriverFactory.appContext = this
+        AppContextHolder.init(this)
     }
 }

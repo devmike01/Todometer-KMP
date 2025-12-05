@@ -17,6 +17,7 @@ kotlin{
 
     sourceSets{
         commonMain.dependencies {
+            implementation(project(":common:reminder"))
             implementation(projects.appCommon.ui)
             implementation(projects.appCommon.uiTooling)
         }

@@ -92,6 +92,11 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
         contentState: ReminderContentState,
         modifier: Modifier
     ) {
+        LaunchedEffect(Unit){
+            onEvent(ReminderEvent.LoadSnoozeTimes)
+            onEvent(ReminderEvent.LoadRepeatDays)
+        }
+
         Scaffold(modifier = Modifier.fillMaxSize(),
             topBar = {
                 TopAppBar({
@@ -105,7 +110,8 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
                     }
                 }, actions = {
                     Button(onClick = {
-
+                        onEvent(ReminderEvent.SetReminder)
+                        onEvent(ReminderNavigationEvent.NavigateBack)
                     },
                         colors = ButtonDefaults.buttonColors().copy(
                             containerColor = MaterialTheme.colorScheme.primary,
@@ -115,10 +121,7 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
                     }
                 })
             }) {
-            LaunchedEffect(Unit){
-                onEvent(ReminderEvent.LoadSnoozeTimes)
-                onEvent(ReminderEvent.LoadRepeatDays)
-            }
+
             ReminderScreen(uiState,
                 contentState,
                 onRepeatedDayClick ={ day ->

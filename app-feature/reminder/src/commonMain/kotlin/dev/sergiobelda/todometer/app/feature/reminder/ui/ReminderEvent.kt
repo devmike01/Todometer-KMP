@@ -13,4 +13,6 @@ sealed interface ReminderEvent : FonamentEvent {
     data class MinuteTimeChanged(val minutes: Int, val isUpdate: Boolean): ReminderEvent
     data class SecondTimeChanged(val seconds: Int, val isUpdate: Boolean): ReminderEvent
     data class HourTimeChanged(val hour: Int, val isUpdate: Boolean): ReminderEvent
+    data object SetReminder: ReminderEvent
+
 }

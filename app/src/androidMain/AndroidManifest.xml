@@ -16,6 +16,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Required for apps using exact alarms on Android 12 (API 31) and higher -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- Required to reschedule alarms after a device reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:name="dev.sergiobelda.todometer.app.TodometerApplication"
         android:allowBackup="false"
@@ -54,6 +60,7 @@
                     android:scheme="app" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/Theme.Todometer" />

@@ -1,10 +1,14 @@
 package dev.sergiobelda.todometer.app.feature.reminder.ui
 
 import androidx.compose.ui.text.toLowerCase
+import androidx.lifecycle.viewModelScope
 import dev.sergiobelda.fonament.presentation.ui.FonamentEvent
 import dev.sergiobelda.fonament.presentation.ui.FonamentViewModel
 import dev.sergiobelda.todometer.app.feature.reminder.model.DayOfWeekInitial
 import dev.sergiobelda.todometer.app.feature.reminder.model.SnoozeTime
+import dev.sergiobelda.todometer.common.reminder.AppAlarmManager
+import dev.sergiobelda.todometer.common.reminder.BRBus
+import kotlinx.coroutines.launch
 import kotlin.collections.set
 
 class ReminderScreenViewModel(private val alarmDateTime: Long) : FonamentViewModel<ReminderState>(initialUIState = ReminderState()) {
@@ -20,6 +24,7 @@ class ReminderScreenViewModel(private val alarmDateTime: Long) : FonamentViewMod
     }
 
     init {
+        // Alarm time passed from the add to-do screen
         updateUIState {
             it.copy(alarmTimeInMillis = alarmDateTime)
         }
@@ -27,6 +32,7 @@ class ReminderScreenViewModel(private val alarmDateTime: Long) : FonamentViewMod
 
     override fun handleEvent(event: FonamentEvent) {
         when(event){
+            is ReminderEvent.SetReminder -> setReminder(alarmDateTime)
             is ReminderEvent.LoadRepeatDays -> loadRepeatDays()
             is ReminderEvent.LoadSnoozeTimes -> loadSnoozeTimes()
             is ReminderEvent.SelectRepeatDay -> toggleRepeatedDay(event.selection)
@@ -60,6 +66,10 @@ class ReminderScreenViewModel(private val alarmDateTime: Long) : FonamentViewMod
         }
     }
 
+    private fun setReminder(timeInMilliseconds: Long){
+        println("Reminder was set to: $timeInMilliseconds")
+        AppAlarmManager.set(timeInMilliseconds)
+    }
 
     fun toggleRepeatedDay(selection: String){
         repeatDaysSelections[selection] = repeatDaysSelections[selection] == false //|| repeatDaysSelections[selection] == null

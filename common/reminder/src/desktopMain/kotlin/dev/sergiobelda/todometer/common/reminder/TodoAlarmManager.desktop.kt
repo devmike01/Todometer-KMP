@@ -1,5 +1,7 @@
 package dev.sergiobelda.todometer.common.reminder
 
-actual interface AppAlarmManager  {
-    actual fun set(timeInMilliseconds: Long)
+actual object AppAlarmManager  {
+    actual fun set(timeInMilliseconds: Long){
+
+    }
 }
