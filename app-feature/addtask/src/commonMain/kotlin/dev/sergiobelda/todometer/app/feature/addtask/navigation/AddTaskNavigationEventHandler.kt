@@ -17,14 +17,15 @@
 package dev.sergiobelda.todometer.app.feature.addtask.navigation
 
 import dev.sergiobelda.fonament.presentation.navigation.FonamentNavigationEventHandler
+import dev.sergiobelda.todometer.common.resources.NavBundle
 
 fun addTaskNavigationEventHandler(
     navigateBack: () -> Unit,
-    navigateToReminder: (Long) -> Unit
+    navigateToReminder: (NavBundle) -> Unit
 
 ): FonamentNavigationEventHandler<AddTaskNavigationEvent> = FonamentNavigationEventHandler {
     when (it) {
         AddTaskNavigationEvent.NavigateBack -> navigateBack()
-        is AddTaskNavigationEvent.NavigateToReminder -> navigateToReminder(it.alarmTimeInMillis)
+        is AddTaskNavigationEvent.NavigateToReminder -> navigateToReminder(it.reminderBundle)
     }
 }

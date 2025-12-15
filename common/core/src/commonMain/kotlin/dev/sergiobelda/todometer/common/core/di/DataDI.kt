@@ -19,4 +19,5 @@ package dev.sergiobelda.todometer.common.core.di
 val dataModules = databaseModule +
     preferenceModule +
     localDataSourceModule +
-    repositoryModule
+    repositoryModule +
+        todoReminderModule

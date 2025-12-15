@@ -62,6 +62,7 @@ import dev.sergiobelda.todometer.app.feature.reminder.res.Strings
 import dev.sergiobelda.todometer.common.designsystem.resources.images.Images
 import dev.sergiobelda.todometer.common.designsystem.resources.images.icons.ArrowBack
 import dev.sergiobelda.todometer.common.designsystem.resources.images.icons.ExpandLess
+import dev.sergiobelda.todometer.common.reminder.NotificationHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
@@ -71,6 +72,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.compose.koinInject
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -92,6 +94,7 @@ class ReminderContent : FonamentContent<ReminderState, ReminderContentState>() {
         contentState: ReminderContentState,
         modifier: Modifier
     ) {
+
         LaunchedEffect(Unit){
             onEvent(ReminderEvent.LoadSnoozeTimes)
             onEvent(ReminderEvent.LoadRepeatDays)
@@ -181,7 +184,9 @@ fun ReminderScreen(reminderUiState: ReminderState,
         verticalArrangement = Arrangement
             .spacedBy(Dimens.Reminder.NormalItemVerticalSpacing.dp)){
 
-        val now = Instant.fromEpochMilliseconds(reminderUiState.alarmTimeInMillis)
+        val reminderBundle = reminderUiState.reminderBundle
+        println("value-reminderBundle: ${reminderBundle.getOrDefault("dueDate", 0L)}")
+        val now = Instant.fromEpochMilliseconds(reminderBundle.getOrDefault("dueDate", 0L))
 
         val localTime = now.toLocalDateTime(TimeZone.UTC)
         val period = "AM".takeIf { localTime.hour in 0..11 } ?: "PM"

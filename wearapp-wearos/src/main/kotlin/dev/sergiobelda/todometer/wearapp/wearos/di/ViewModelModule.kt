@@ -35,7 +35,7 @@ internal val viewModelModule = module {
             get(),
             get(),
             get(),
-            get(),
+            get() ,
         )
     }
     fonamentViewModel { parameters ->

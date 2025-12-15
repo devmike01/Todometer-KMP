@@ -6,17 +6,26 @@ import dev.sergiobelda.fonament.presentation.ui.FonamentEvent
 import dev.sergiobelda.fonament.presentation.ui.FonamentViewModel
 import dev.sergiobelda.todometer.app.feature.reminder.model.DayOfWeekInitial
 import dev.sergiobelda.todometer.app.feature.reminder.model.SnoozeTime
+import dev.sergiobelda.todometer.common.domain.usecase.reminder.SetReminderUseCase
 import dev.sergiobelda.todometer.common.reminder.AppAlarmManager
 import dev.sergiobelda.todometer.common.reminder.BRBus
+import dev.sergiobelda.todometer.common.resources.NavBundle
+import dev.sergiobelda.todometer.common.resources.asNavBundle
 import kotlinx.coroutines.launch
 import kotlin.collections.set
 
-class ReminderScreenViewModel(private val alarmDateTime: Long) : FonamentViewModel<ReminderState>(initialUIState = ReminderState()) {
+class ReminderScreenViewModel(
+    private val navBundleString: String,
+    private val todoSetReminderUseCase: SetReminderUseCase
+)
+    : FonamentViewModel<ReminderState>(initialUIState = ReminderState()) {
 
+   // private val navBundle = navBundleString.asNavBundle()
     private val repeatDaysSelections = mutableMapOf<String, Boolean>()
 
-    private val days = mapOf("monday"  to 'T', "tuesday" to 'T',
-        "wednesday" to 'W', "whursday" to 'W', "friday" to 'F', "saturday" to 'S',
+
+    private val days = mapOf("monday"  to 'M', "tuesday" to 'T',
+        "wednesday" to 'W', "thursday" to 'T', "friday" to 'F', "saturday" to 'S',
         "sunday" to 'S').also { days ->
             days.keys.forEach { day ->
                 repeatDaysSelections[day] = false
@@ -24,15 +33,21 @@ class ReminderScreenViewModel(private val alarmDateTime: Long) : FonamentViewMod
     }
 
     init {
+        println("navBundleString: $navBundleString")
+        val navBundle = navBundleString.asNavBundle()
         // Alarm time passed from the add to-do screen
         updateUIState {
-            it.copy(alarmTimeInMillis = alarmDateTime)
+            it.copy(reminderBundle = navBundle)
         }
     }
 
     override fun handleEvent(event: FonamentEvent) {
+        val navBundle = navBundleString.asNavBundle()
         when(event){
-            is ReminderEvent.SetReminder -> setReminder(alarmDateTime)
+            is ReminderEvent.SetReminder -> setReminder(
+                navBundle.getOrDefault("dueDate", 0L),
+                navBundle.getOrDefault("title", "N/A"),
+                navBundle.getOrDefault("description", "N/A"))
             is ReminderEvent.LoadRepeatDays -> loadRepeatDays()
             is ReminderEvent.LoadSnoozeTimes -> loadSnoozeTimes()
             is ReminderEvent.SelectRepeatDay -> toggleRepeatedDay(event.selection)
@@ -66,9 +81,9 @@ class ReminderScreenViewModel(private val alarmDateTime: Long) : FonamentViewMod
         }
     }
 
-    private fun setReminder(timeInMilliseconds: Long){
-        println("Reminder was set to: $timeInMilliseconds")
-        AppAlarmManager.set(timeInMilliseconds)
+    private fun setReminder(timeInMilliseconds: Long, title: String, description: String){
+        todoSetReminderUseCase.invoke(timeInMilliseconds, title, description)
+       // AppAlarmManager.set(timeInMilliseconds)
     }
 
     fun toggleRepeatedDay(selection: String){

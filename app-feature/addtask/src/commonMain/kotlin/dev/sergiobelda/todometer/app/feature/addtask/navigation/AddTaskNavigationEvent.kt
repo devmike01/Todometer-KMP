@@ -17,8 +17,9 @@
 package dev.sergiobelda.todometer.app.feature.addtask.navigation
 
 import dev.sergiobelda.fonament.presentation.navigation.FonamentNavigationEvent
+import dev.sergiobelda.todometer.common.resources.NavBundle
 
 sealed interface AddTaskNavigationEvent : FonamentNavigationEvent {
     data object NavigateBack : AddTaskNavigationEvent
-    data class NavigateToReminder(val alarmTimeInMillis: Long) : AddTaskNavigationEvent
+    data class NavigateToReminder(val reminderBundle: NavBundle) : AddTaskNavigationEvent
 }

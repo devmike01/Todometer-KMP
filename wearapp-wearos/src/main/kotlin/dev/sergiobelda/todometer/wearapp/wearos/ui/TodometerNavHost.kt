@@ -46,6 +46,7 @@ fun TodometerNavHost(
         startNavDestination = HomeNavDestination,
     ) {
         composable(navDestination = HomeNavDestination) {
+
             HomeScreen.NavigationNode(
                 viewModel = koinFonamentViewModel(),
                 navigationEventHandler = homeNavigationEventHandler(

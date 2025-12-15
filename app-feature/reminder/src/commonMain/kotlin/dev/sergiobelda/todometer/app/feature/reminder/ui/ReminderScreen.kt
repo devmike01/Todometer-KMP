@@ -5,12 +5,14 @@ import dev.sergiobelda.fonament.presentation.ui.FonamentUI
 import dev.sergiobelda.navigation.compose.extended.annotation.NavArgument
 import dev.sergiobelda.navigation.compose.extended.annotation.NavArgumentType
 import dev.sergiobelda.navigation.compose.extended.annotation.NavDestination
+import kotlinx.serialization.Serializable
+
 
 @NavDestination(name = "reminder",
     destinationId = "reminder",
     deepLinkUris = ["app://open.add.reminder"],
     arguments = [
-        NavArgument("alarmTime", NavArgumentType.Long)
+        NavArgument("navBundle", NavArgumentType.String)
     ]
 
 )

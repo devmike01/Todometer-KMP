@@ -18,6 +18,7 @@ package dev.sergiobelda.todometer.common.core.di
 
 import dev.sergiobelda.todometer.common.domain.usecase.apptheme.GetAppThemeUseCase
 import dev.sergiobelda.todometer.common.domain.usecase.apptheme.SetAppThemeUseCase
+import dev.sergiobelda.todometer.common.domain.usecase.reminder.SetReminderUseCase
 import dev.sergiobelda.todometer.common.domain.usecase.task.DeleteTasksUseCase
 import dev.sergiobelda.todometer.common.domain.usecase.task.GetTaskListSelectedTasksUseCase
 import dev.sergiobelda.todometer.common.domain.usecase.task.GetTaskListTasksUseCase
@@ -46,6 +47,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 
 internal val useCaseModule = module {
+    singleOf(::SetReminderUseCase)
     singleOf(::GetTaskListsUseCase)
     singleOf(::InsertTaskListUseCase)
     singleOf(::GetTaskUseCase)

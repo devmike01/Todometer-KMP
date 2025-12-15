@@ -45,7 +45,6 @@ import dev.sergiobelda.todometer.app.feature.edittasklist.ui.EditTaskListScreen
 import dev.sergiobelda.todometer.app.feature.home.ui.HomeNavDestination
 import dev.sergiobelda.todometer.app.feature.home.ui.HomeScreen
 import dev.sergiobelda.todometer.app.feature.reminder.navigation.reminderNavigationEventHandler
-import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderNavArgumentKeys
 import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderNavDestination
 import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderSafeNavArgs
 import dev.sergiobelda.todometer.app.feature.reminder.ui.ReminderScreen
@@ -56,6 +55,7 @@ import dev.sergiobelda.todometer.app.feature.taskdetails.navigation.taskDetailsN
 import dev.sergiobelda.todometer.app.feature.taskdetails.ui.TaskDetailsNavDestination
 import dev.sergiobelda.todometer.app.feature.taskdetails.ui.TaskDetailsSafeNavArgs
 import dev.sergiobelda.todometer.app.feature.taskdetails.ui.TaskDetailsScreen
+import dev.sergiobelda.todometer.common.resources.NavBundle
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -101,8 +101,11 @@ fun TodometerNavHost(
         addTaskNode(
             navigateBack = navigateBackAction,
             navigateToReminder = {
+
                 navAction.navigate(ReminderNavDestination
-                    .safeNavRoute(it))
+                    .safeNavRoute(it.packaged.also {
+                        println("Logging__ $it")
+                    }))
             }
         )
 
@@ -139,10 +142,11 @@ private fun NavGraphBuilder.homeNode(
 private fun NavGraphBuilder.reminder(
     navigateBack: () -> Unit,){
     composable(navDestination = ReminderNavDestination){ navBackStackEntry ->
-        val alarmTimeMillis = ReminderSafeNavArgs(navBackStackEntry).alarmTime
+        val reminderBundle = ReminderSafeNavArgs(navBackStackEntry).navBundle
+        //val title = ReminderSafeNavArgs()
         val reminderEventHandler = reminderNavigationEventHandler(navigateBack)
         ReminderScreen.NavigationNode(viewModel = koinFonamentViewModel{
-            parametersOf(alarmTimeMillis)
+            parametersOf(reminderBundle )
         },
             navigationEventHandler = reminderEventHandler)
     }
@@ -200,14 +204,14 @@ private fun NavGraphBuilder.editTaskListNode(
 
 private fun NavGraphBuilder.addTaskNode(
     navigateBack: () -> Unit,
-    navigateToReminder: (Long) -> Unit
+    navigateToReminder: (NavBundle) -> Unit
 ) {
     val addTaskNavigationEventHandler = addTaskNavigationEventHandler(
         navigateBack = navigateBack,
         navigateToReminder = navigateToReminder,
     )
 
-    composable(navDestination = AddTaskNavDestination) { navBackStackEntry ->
+    composable(navDestination = AddTaskNavDestination) { _ ->
        AddTaskScreen.NavigationNode(
             navigationEventHandler = addTaskNavigationEventHandler,
             viewModel = koinFonamentViewModel(),

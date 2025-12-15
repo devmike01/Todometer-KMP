@@ -10,10 +10,25 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import org.koin.compose.getKoin
+import org.koin.java.KoinJavaComponent.inject
+import org.koin.mp.KoinPlatformTools
 
 class TodoAlarmReceiver : BroadcastReceiver() {
+
+    val notificationHandler : NotificationHandler by inject(AndroidNotificationHandler::class.java)
+
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("TodoAlarmRe001", "Alarm fired immediately!!")
-        BRBus.send(ReminderEvent.TimeElapsed)
+
+        when(intent?.action){
+            ReminderPermission.ACTION_SNOOZE ->{
+                // SNOOZE Reminder
+            }
+            else ->{
+                // show notification
+                notificationHandler.setUpNotification("", "")
+                // AndroidNotificationHandler
+            }
+        }
     }
 }

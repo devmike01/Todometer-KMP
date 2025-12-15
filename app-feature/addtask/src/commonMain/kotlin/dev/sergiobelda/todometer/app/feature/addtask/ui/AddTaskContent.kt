@@ -67,6 +67,7 @@ import dev.sergiobelda.todometer.app.feature.addtask.navigation.AddTaskNavigatio
 import dev.sergiobelda.todometer.common.designsystem.resources.images.Images
 import dev.sergiobelda.todometer.common.designsystem.resources.images.icons.Close
 import dev.sergiobelda.todometer.common.domain.model.Tag
+import dev.sergiobelda.todometer.common.resources.NavBundle
 import dev.sergiobelda.todometer.common.resources.TodometerResources
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -125,7 +126,11 @@ data object AddTaskContent : FonamentContent<AddTaskUIState, AddTaskContentState
                         val dueDate = contentState.taskDueDate
                         if(dueDate != null){
                             onEvent(AddTaskNavigationEvent
-                                .NavigateToReminder(dueDate))
+                                .NavigateToReminder(NavBundle().apply {
+                                    put("dueDate", dueDate)
+                                    put("title", contentState.taskTitle)
+                                    put("description", contentState.taskDescription)
+                                }))
                         }else{
                             onEvent(AddTaskEvent.ShowMessage("Due date has not been set."))
                         }

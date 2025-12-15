@@ -16,6 +16,7 @@
 
 package dev.sergiobelda.todometer.wearapp.wearos.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,8 +24,11 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import dev.sergiobelda.todometer.wearapp.wearos.di.TodometerAppDI
 import dev.sergiobelda.todometer.wearapp.wearos.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
+import org.koin.android.scope.AndroidScopeComponent
+import org.koin.androidx.scope.activityScope
+import org.koin.core.scope.Scope
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), AndroidScopeComponent {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,4 +45,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override val scope: Scope by activityScope()
 }

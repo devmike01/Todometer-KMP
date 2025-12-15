@@ -18,6 +18,7 @@ kotlin {
             implementation(projects.common.domain)
             implementation(projects.common.database)
             implementation(projects.common.preferences)
+            implementation(projects.common.reminder)
 
             implementation(libs.jetbrains.kotlin.coroutines.core)
         }
